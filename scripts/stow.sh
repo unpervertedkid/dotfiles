@@ -42,13 +42,31 @@ execute_step() {
 
 setUpStowForDirectory() {
     dir=$1
-    stow --adopt "$dir"
+    stow_dir_path="$PWD/$dir" # Path to the stow directory
+
+    if [ ! -d "$stow_dir_path" ]; then
+        echo "Error: Directory $stow_dir_path does not exist."
+        return 1
+    fi
+
+    # Remove existing conflicting files
+    echo "Checking for conflicts..."
+    find "$stow_dir_path" -type f -exec basename {} \; | while read -r file; do
+        target="$HOME/$file"
+        if [ -e "$target" ] && [ ! -L "$target" ]; then
+            echo "Removing existing file: $target"
+            rm -f "$target"
+        fi
+    done
+
+    # Stow the directory
+    stow -v --restow --target="$HOME" "$dir"
 }
 
 setUpStow() {
     for dir in */; do
         if [ "$dir" != "scripts/" ]; then
-            stow --adopt "$dir"
+            setUpStowForDirectory "$dir"
         fi
     done
 }
