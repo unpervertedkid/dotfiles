@@ -60,7 +60,7 @@ setUpStowForDirectory() {
     done
 
     # Stow the directory
-    stow -v --restow --target="$HOME" "$dir"
+    stow -v --target="$HOME" "$dir"
 }
 
 setUpStow() {

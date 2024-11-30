@@ -7,6 +7,7 @@ OS_TYPE=$(uname -s)
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
+PREFERRED_FONT="JetBrainsMono"
 
 # Reset color
 NC='\033[0m'
@@ -85,6 +86,23 @@ install_oh_my_zsh() {
     RUNZSH=no /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 }
 
+install_oh_my_posh_darwin() {
+    brew install jandedobbeleer/oh-my-posh/oh-my-posh
+}
+
+install_oh_my_posh_linux() {
+    curl -s https://ohmyposh.dev/install.sh | bash -s
+}
+
+install_nerd_font_using_oh_my_posh() {
+    oh-my-posh font install $PREFERRED_FONT
+}
+
+configure_installed_font_darwin() {
+    # Set the font for iTerm2
+    defaults write com.googlecode.iterm2 "Normal Font" -string "$PREFERRED_FONT-Regular 14"
+    defaults write com.googlecode.iterm2 "Non Ascii Font" -string "$PREFERRED_FONT-Regular 14"
+}
 install_tmux_darwin() {
     brew install tmux
 }
@@ -103,6 +121,8 @@ if [ "$OS_TYPE" == "Linux" ]; then
     execute_step "Installing Zsh" install_zsh_linux
     execute_step "Installing Stow" install_stow_linux
     execute_step "Installing Oh My Zsh" install_oh_my_zsh
+    execute_step "Installing Oh My Posh" install_oh_my_posh_linux
+    execute_step "Installing Nerd Font using Oh My Posh" install_nerd_font_using_oh_my_posh
     execute_step "Installing Tmux" install_tmux_linux
 
 # For macOS based systems
@@ -114,5 +134,8 @@ elif [ "$OS_TYPE" == "Darwin" ]; then
     execute_step "Installing Stow" install_stow_darwin
     execute_step "Installing Zsh" install_zsh_darwin
     execute_step "Installing Oh My Zsh" install_oh_my_zsh
+    execute_step "Installing Oh My Posh" install_oh_my_posh_darwin
+    execute_step "Installing Nerd Font using Oh My Posh" install_nerd_font_using_oh_my_posh
+    execute_step "Configuring installed font" configure_installed_font_darwin
     execute_step "Installing Tmux" install_tmux_darwin
 fi
